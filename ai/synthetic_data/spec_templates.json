@@ -1,0 +1,54 @@
+{
+  "$schema": "https://identity-trust.platform/schemas/v1/synthetic-specimens.json",
+  "version": "1.0",
+  "specimens": [
+    {
+      "specimen_id": "SYNTH_NAT_ID_SAMPLE_01",
+      "format": "SYNTH_NAT_ID_V1",
+      "fields": {
+        "document_number": "A12345678",
+        "full_name": "ALEXANDER TEST CITIZEN",
+        "date_of_birth": "1990-05-15",
+        "expiry_date": "2030-05-15",
+        "issuing_country": "SGP"
+      },
+      "expected_validation": {
+        "status": "PASS",
+        "reason_code": "DEC_ALLOW_SATISFIED"
+      },
+      "watermark": "SYNTHETIC TEST DOCUMENT — NOT REAL PII"
+    },
+    {
+      "specimen_id": "SYNTH_NAT_ID_EXPIRED_02",
+      "format": "SYNTH_NAT_ID_V1",
+      "fields": {
+        "document_number": "A87654321",
+        "full_name": "MORGAN EXPIRED CITIZEN",
+        "date_of_birth": "1985-02-10",
+        "expiry_date": "2023-01-01",
+        "issuing_country": "USA"
+      },
+      "expected_validation": {
+        "status": "FAIL",
+        "reason_code": "DEC_BLOCK_DOC_EXPIRED"
+      },
+      "watermark": "SYNTHETIC TEST DOCUMENT — NOT REAL PII"
+    },
+    {
+      "specimen_id": "SYNTH_DL_VALID_01",
+      "format": "SYNTH_DL_V1",
+      "fields": {
+        "license_number": "DL-849201-B",
+        "full_name": "TAYLOR VALID DRIVER",
+        "issue_date": "2020-08-20",
+        "expiry_date": "2030-08-20",
+        "vehicle_classes": ["A", "B", "C"]
+      },
+      "expected_validation": {
+        "status": "PASS",
+        "reason_code": "DEC_ALLOW_SATISFIED"
+      },
+      "watermark": "DEMO SYNTHETIC SPECIMEN"
+    }
+  ]
+}
