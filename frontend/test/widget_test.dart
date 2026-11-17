@@ -225,7 +225,7 @@ void main() {
         expect(find.byType(DigitalIdentityCardIllustration), findsOneWidget);
 
         // Buttons
-        expect(find.text(AppStrings.getStarted), findsOneWidget);
+        expect(find.text('Sign Up'), findsOneWidget);
         expect(find.text(AppStrings.signIn), findsOneWidget);
 
         // Privacy Footer
@@ -233,7 +233,7 @@ void main() {
       },
     );
 
-    testWidgets('"Get Started" button navigates to onboarding route', (
+    testWidgets('"Sign Up" button navigates to create-account route', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -246,14 +246,14 @@ void main() {
       await tester.pumpAndSettle();
 
       // Ensure button is visible in viewport before tapping
-      final getStartedFinder = find.text(AppStrings.getStarted);
-      await tester.ensureVisible(getStartedFinder);
-      await tester.tap(getStartedFinder);
+      final signUpFinder = find.text('Sign Up');
+      await tester.ensureVisible(signUpFinder);
+      await tester.tap(signUpFinder);
       await tester.pumpAndSettle();
 
-      // Verifies navigation to Screen 003 Onboarding Identity screen
-      expect(find.byType(OnboardingIdentityScreen), findsOneWidget);
-      expect(find.text(AppStrings.onboardingIdentityHeading), findsOneWidget);
+      // Verifies navigation to Screen 011 Create Account screen
+      expect(find.byType(CreateAccountScreen), findsOneWidget);
+      expect(find.text(AppStrings.createAccountHeading), findsOneWidget);
     });
 
     testWidgets('"Sign In" button navigates to sign-in route', (
@@ -300,7 +300,7 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(find.text(AppStrings.welcomeHeading), findsOneWidget);
-          expect(find.text(AppStrings.getStarted), findsOneWidget);
+          expect(find.text('Sign Up'), findsOneWidget);
         }
 
         addTearDown(tester.view.resetPhysicalSize);

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ai-identity-verification": {
+      "command": "python",
+      "args": ["backend/app/mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}

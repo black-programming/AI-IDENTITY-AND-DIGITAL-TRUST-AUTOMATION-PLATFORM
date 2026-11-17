@@ -33,14 +33,22 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <!-- Unified Navigation Dock (Single Link Access) -->
+  <div id="unified-nav-dock" style="position:fixed; top:12px; right:16px; z-index:999999; display:flex; align-items:center; gap:10px; background:rgba(15,23,42,0.88); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.15); padding:6px 14px; border-radius:30px; box-shadow:0 8px 30px rgba(0,0,0,0.5); font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size:12px; color:#e2e8f0;">
+    <span style="display:flex; align-items:center; gap:6px; font-weight:600; color:#38bdf8;">
+      <span style="width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 8px #22c55e;"></span>
+      Unified Platform
+    </span>
+    <span style="color:rgba(255,255,255,0.25);">|</span>
+    <a href="/docs" target="_blank" style="color:#94a3b8; text-decoration:none; font-weight:500; display:flex; align-items:center; gap:4px;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#94a3b8'">
+      📖 API Docs
+    </a>
+    <span style="color:rgba(255,255,255,0.25);">|</span>
+    <a href="/api/v1/health" target="_blank" style="color:#94a3b8; text-decoration:none; font-weight:500; display:flex; align-items:center; gap:4px;" onmouseover="this.style.color='#22c55e'" onmouseout="this.style.color='#94a3b8'">
+      🩺 Health
+    </a>
+  </div>
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

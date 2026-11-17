@@ -1,0 +1,13 @@
+.dart_tool/
+.packages
+build/
+.git/
+.gitignore
+.metadata
+android/
+ios/
+linux/
+macos/
+windows/
+test/
+*.log

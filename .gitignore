@@ -63,6 +63,15 @@ frontend/.idea/
 *.sublime-project
 *.sublime-workspace
 
+# Node / Web Frontend
+node_modules/
+dist/
+dist-ssr/
+
+# Logs & Test outputs
+*.log
+test_out.txt
+
 # Antigravity Brain & Scratch Files
 .system_generated/
 scratch/

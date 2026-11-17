@@ -1,49 +1,68 @@
-"""Evidence Receipts API."""
+"""Evidence Receipts API — Generation, Retrieval, and Public Cryptographic Verification."""
 
-from datetime import datetime, timezone
-import hashlib
-from fastapi import APIRouter, Depends
+from typing import Optional
+from fastapi import APIRouter, Depends, Query
 
-from app.core.security import AuthenticatedUser, get_current_user
+from app.api.v1.cases import _MOCK_CASES_DB
+from app.core.errors import NotFoundException
+from app.core.security import AuthenticatedUser, enforce_case_access, get_current_user
 from app.schemas.receipts import (
     EvidenceReceiptResponse,
-    ReceiptClaim,
-    ReceiptDetermination,
-    ReceiptIntegrity,
-    ReceiptIssuer,
+    ReceiptVerifyRequest,
+    ReceiptVerifyResponse,
 )
+from app.services.audit_service import AuditService
 
-router = APIRouter()
+router = APIRouter(tags=["Evidence Receipts"])
 
 
-@router.get("/receipts/{case_id}", response_model=EvidenceReceiptResponse, tags=["Receipts"])
+@router.get("/receipts/{case_id}", response_model=EvidenceReceiptResponse)
 async def get_receipt(
     case_id: str,
     current_user: AuthenticatedUser = Depends(get_current_user),
 ) -> EvidenceReceiptResponse:
-    dummy_payload = f"{case_id}:{current_user.user_id}:v1.0.0"
-    merkle_root = hashlib.sha256(dummy_payload.encode()).hexdigest()
-    return EvidenceReceiptResponse(
-        receipt_id=f"urn:uuid:{case_id}",
-        issued_at=datetime.now(timezone.utc),
-        issuer=ReceiptIssuer(
-            platform_id="ai-identity-trust-engine-v1",
-            public_key_fingerprint="SHA256:7e8a9f0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f",
-        ),
-        claim=ReceiptClaim(
+    """Retrieve cryptographic evidence receipt for a verification case."""
+    case = _MOCK_CASES_DB.get(case_id)
+    if case:
+        # Enforce cross-user and cross-org access boundaries
+        enforce_case_access(
             case_id=case_id,
-            claim_type="SYNTH_NAT_ID_V1",
-            evidence_sha256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        ),
-        determination=ReceiptDetermination(
-            decision="ALLOW",
-            reason_codes=["DEC_ALLOW_SATISFIED"],
-            policy_version="v1.0.0",
-            confidence_score=0.96,
-        ),
-        integrity=ReceiptIntegrity(
-            merkle_root=merkle_root,
-            algorithm="ECDSA_P256_SHA256",
-            signature="MEQCIQDe...4Xg==",
-        ),
+            case_owner_id=case["user_id"],
+            case_org_id=case.get("organization_id"),
+            user=current_user,
+        )
+    else:
+        raise NotFoundException(f"Case '{case_id}' not found")
+
+    return AuditService.generate_receipt(case_id=case_id, actor_id=current_user.user_id)
+
+
+@router.post("/receipts/cases/{case_id}/issue", response_model=EvidenceReceiptResponse)
+async def issue_receipt(
+    case_id: str,
+    current_user: AuthenticatedUser = Depends(get_current_user),
+) -> EvidenceReceiptResponse:
+    """Issue or re-issue a verifiable evidence receipt for a verified or evaluated case."""
+    case = _MOCK_CASES_DB.get(case_id)
+    if not case:
+        raise NotFoundException(f"Case '{case_id}' not found")
+
+    enforce_case_access(
+        case_id=case_id,
+        case_owner_id=case["user_id"],
+        case_org_id=case.get("organization_id"),
+        user=current_user,
+    )
+
+    return AuditService.generate_receipt(case_id=case_id, actor_id=current_user.user_id)
+
+
+@router.post("/receipts/verify", response_model=ReceiptVerifyResponse)
+async def verify_receipt(
+    request: ReceiptVerifyRequest,
+) -> ReceiptVerifyResponse:
+    """Public cryptographic verification barrier for an evidence receipt token or JSON payload."""
+    return AuditService.verify_receipt(
+        receipt_token=request.receipt_token,
+        payload=request.receipt_payload,
     )
